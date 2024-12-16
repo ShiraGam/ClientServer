@@ -1,1 +1,89 @@
 
+import os
+import socket
+import logging
+import struct
+import threading
+
+from config.constants import HEADER_SIZE, PAYLOAD_SIZE_BYTES, MAX_CONNECTIONS, MAX_PORT, DEFAULT_PORT
+from protocol_handler import ProtocolHandler
+
+# Set up basic logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s')
+
+
+def read_port() -> int:
+    default_port = DEFAULT_PORT
+    port_file_path = os.path.join(os.path.dirname(__file__), 'port.info')
+    try:
+        with open(port_file_path, 'r') as file:
+            port = int(file.read().strip())
+            if port < 1 or port > MAX_PORT:
+                logging.warning(f"Invalid port number {port}. Using default port {default_port}.")
+                return default_port
+            return port
+    except (FileNotFoundError, ValueError):
+        logging.warning(f"Warning: Could not read port from file. Using default port {default_port}.")
+        return default_port
+
+
+def handle_client(client_socket, client_address, protocol_handler):
+    logging.info(f"Connection from {client_address} has been established.")
+
+    try:
+        while True:
+            header = client_socket.recv(MAX_CONNECTIONS)
+            if not header:
+                logging.info("No header received. Closing connection.")
+                break
+
+            # Receive the payload size from the header
+            payload_size = int.from_bytes(header[HEADER_SIZE - PAYLOAD_SIZE_BYTES:HEADER_SIZE], byteorder='little')
+
+            payload = bytearray()
+            while len(payload) < payload_size:
+                chunk = client_socket.recv(payload_size - len(payload))
+                if not chunk:
+                    logging.error("Connection lost during payload reception.")
+                    raise ConnectionError("Connection lost during payload reception.")
+                payload.extend(chunk)
+
+            # Combine header and payload
+            message = header + payload
+            protocol_handler.handle_message(client_socket, message)
+
+    except Exception as e:
+        logging.error(f"Error processing message from {client_address}: {e}")
+    finally:
+        client_socket.close()  # Close the client socket when done
+        logging.info(f"Connection with {client_address} closed.")
+
+
+def start_server():
+    port = read_port()
+    protocol_handler = ProtocolHandler()  # Initialize the protocol handler
+
+    try:
+        # Set up the server socket
+        server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        server_socket.bind(('127.0.0.1', port))
+        server_socket.listen(MAX_CONNECTIONS)  # Listen for multiple connections
+        logging.info(f"Server is listening on port {port}...")
+
+        while True:
+            client_socket, client_address = server_socket.accept()
+            # Start a new thread to handle the client
+            client_thread = threading.Thread(target=handle_client,
+                                             args=(client_socket, client_address, protocol_handler))
+            client_thread.start()  # Start the client thread
+
+    except Exception as e:
+        logging.error(f"Server error: {e}")
+    finally:
+        if 'server_socket' in locals():
+            server_socket.close()
+            logging.info("Server socket closed.")
+
+
+if __name__ == "__main__":
+    start_server()
