@@ -37,7 +37,7 @@ const std::vector<uint8_t>& Request::getPayload() const {
 	return payload;
 }
 
-// Setter implementations
+// Setter 
 void Request::setClientId(const std::vector<uint8_t>& clientId) {
 	if (clientId.size() != Constants::CLIENT_ID_SIZE) {
 		throw std::invalid_argument("Client ID must be exactly 16 bytes.");
@@ -99,8 +99,6 @@ std::vector<uint8_t> Request::serialize() const {
 
 	// Add Payload (variable size)
 	data.insert(data.end(), payload.begin(), payload.end());
-
-
 
 	return data;
 }
