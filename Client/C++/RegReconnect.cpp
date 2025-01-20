@@ -2,8 +2,6 @@
 #include "ConnectionManager.h"
 
 using namespace Constants;
-
-
 // Constructor
 RegReconnect::RegReconnect() {}
 
@@ -69,10 +67,6 @@ std::string RegReconnect::getEncryptedFileName(const std::string& fileName) {
 }
 
 
-
-
-
-
 std::vector<uint8_t> RegReconnect::createPayloadForRequest826(const std::string& name, const std::vector<uint8_t>& publicKey) {
 	// Check if the public key size is exactly 160 bytes, throw an error if it's shorter
 	if (publicKey.size() != 160) {
@@ -94,10 +88,6 @@ std::vector<uint8_t> RegReconnect::createPayloadForRequest826(const std::string&
 
 	return payload;
 }
-
-
-
-
 
 
 std::vector<uint8_t> RegReconnect::buildPayload(
