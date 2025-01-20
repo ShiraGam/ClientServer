@@ -3,8 +3,6 @@
 using namespace Constants;
 using namespace CryptoPP;
 
-
-
 // Continue implementing other methods as defined in the header
 size_t CryptoConnectionHandler::GetPublicKeySize(const RSA::PublicKey& publicKey) {
 	ByteQueue queue;
