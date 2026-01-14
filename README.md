@@ -96,6 +96,12 @@ Additionally, one of the objectives of the project was to analyze the protocol a
 - **Client**: Retries sending data up to 3 times if errors occur, then exits with a detailed error message.
 - **Server**: Manages unexpected errors gracefully and logs issues without crashing.
 
+Security Note:
+This project focuses on learning cryptographic concepts such as key exchange and encryption.
+The communication protocol is implemented at the application level.
+In real-world systems, transport security is typically handled using TLS.
+
+
 
 
 
