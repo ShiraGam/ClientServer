@@ -25,8 +25,8 @@ int main() {
 	std::vector<uint8_t> clientNameBytes(MAX_NAME_LENGTH_PROTOCOL);
 	std::vector<uint8_t> decryptedAESKey;
 	std::vector<uint8_t>  encryptedFileNameBytes;
-	int attempts = 0; // Initialize attempts counter
-	bool success = false; // Flag to indicate success
+	int attempts = 0; 
+	bool success = false; 
 	// Declare RSA key pair
 	CryptoPP::RSA::PublicKey publicKey;
 	CryptoPP::RSA::PrivateKey privateKey;
