@@ -56,12 +56,10 @@ int main() {
 		}
 		catch (const CryptoPP::Exception& e) {
 			std::cerr << "Crypto++ error: " << e.what() << std::endl;
-			connection.closeConnection();
 			return -1;
 		}
 		catch (const std::exception& e) {
 			std::cerr << "Standard exception: " << e.what() << std::endl;
-			connection.closeConnection();
 			return -1;
 		}
 
@@ -95,12 +93,10 @@ int main() {
 		}
 		catch (const CryptoPP::Exception& e) {
 			std::cerr << "Crypto++ error: " << e.what() << std::endl;
-			connection.closeConnection();
 			return -1;
 		}
 		catch (const std::exception& e) {
 			std::cerr << "Standard exception: " << e.what() << std::endl;
-			connection.closeConnection();
 			return -1;
 		}
 	}
@@ -120,7 +116,6 @@ int main() {
 	}
 	catch (const std::filesystem::filesystem_error& e) {
 		std::cerr << "Filesystem error: " << e.what() << std::endl;
-		connection.closeConnection();
 		return -1;
 	}
 	try {
@@ -128,7 +123,6 @@ int main() {
 		bufferUuid = RegReconnect::readUuidFromFile();
 	}
 	catch (const std::exception& e) {
-		connection.closeConnection();
 		std::cerr << "Error: " << e.what() << std::endl;
 		return -1;
 	}
@@ -140,7 +134,6 @@ int main() {
 
 	}
 	catch (const std::exception& e) {
-		connection.closeConnection();
 		std::cerr << "Error: " << e.what() << std::endl;
 		return -1;
 	}
@@ -149,8 +142,7 @@ int main() {
 	}
 	catch (const std::exception& e) { std::cerr << "Error: " << e.what() << std::endl; connection.closeConnection(); return -1; }
 
-	// Close the connection.
-	connection.closeConnection();
+	// The connection is automatically closed in the distractor.
 	return 0;
 }
 
